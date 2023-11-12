@@ -32,8 +32,7 @@ func getWriterFunc(out string) (func(dataframe.DataFrame), error) {
 			data.WriteCSV(f)
 		}, nil
 	} else {
-		log.Fatal(fmt.Sprintf("Unsupported writer option: '%s'", out))
-		return nil, nil
+		return nil, fmt.Errorf("Unsupported writer option: '%s'", out)
 	}
 }
 
