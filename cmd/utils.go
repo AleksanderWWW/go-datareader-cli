@@ -59,14 +59,21 @@ type parsedDefaultArgs struct {
 	Out       string
 }
 
+func parseDate(dateStr string) (time.Time, error) {
+	if dateStr == "" {
+		return time.Time{}, nil
+	}
+	return time.Parse("2006-01-02", dateStr)
+}
+
 func parseDefaultArgs(cmd *cobra.Command) (parsedDefaultArgs, error) {
 	symbols, _ := cmd.Flags().GetStringSlice("symbols")
 
 	startDateStr, _ := cmd.Flags().GetString("start-date")
-	startDate, err := time.Parse("2006-01-02", startDateStr)
+	startDate, err := parseDate(startDateStr)
 
 	endDateStr, _ := cmd.Flags().GetString("end-date")
-	endDate, err := time.Parse("2006-01-02", endDateStr)
+	endDate, err := parseDate(endDateStr)
 
 	out, _ := cmd.Flags().GetString("out")
 
