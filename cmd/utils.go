@@ -29,7 +29,7 @@ import (
 
 func isCSV(name string) bool {
 	splited := strings.Split(name, ".")
-	return strings.ToLower(splited[len(splited)-1]) == "csv"
+	return len(splited) >= 2 && strings.ToLower(splited[len(splited)-1]) == "csv"
 }
 
 func getWriterFunc(out string) (func(dataframe.DataFrame), error) {

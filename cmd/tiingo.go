@@ -36,6 +36,7 @@ var tiingoCmd = &cobra.Command{
 		apiKey, _ := cmd.Flags().GetString("api-key")
 
 		config := reader.TiingoReaderConfig{
+			Symbols:   parsedArgs.Symbols,
 			StartDate: parsedArgs.StartDate,
 			EndDate:   parsedArgs.EndDate,
 			ApiKey:    apiKey,
@@ -46,7 +47,7 @@ var tiingoCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
-		tiingoReader, err := reader.NewTiingoDailyReader(parsedArgs.Symbols, config)
+		tiingoReader, err := reader.NewTiingoDailyReader(config)
 		if err != nil {
 			log.Fatal(err)
 		}
