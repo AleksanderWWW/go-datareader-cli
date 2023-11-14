@@ -27,7 +27,7 @@ var tiingoCmd = &cobra.Command{
 	Use:   "tiingo",
 	Short: "Get financial data from Tiingo",
 	Run: func(cmd *cobra.Command, args []string) {
-		parsedArgs, err := parseDefaultArgs(cmd)
+		parsedArgs, err := parseRootArgs(cmd)
 
 		if err != nil {
 			log.Fatal(err)

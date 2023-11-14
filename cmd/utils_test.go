@@ -1,10 +1,9 @@
 package cmd
 
 import (
+	"reflect"
 	"testing"
 	"time"
-
-	"github.com/spf13/cobra"
 )
 
 func TestIsCSV(t *testing.T) {
@@ -108,5 +107,33 @@ func TestParseDate(t *testing.T) {
 				out,
 			)
 		}
+	}
+}
+
+func TestParseArgs(t *testing.T) {
+	expectedParsedArgs := parsedRootArgs{
+		Symbols:   []string{"s1", "s2", "s3"},
+		StartDate: time.Date(2022, 12, 31, 0, 0, 0, 0, time.UTC),
+		EndDate:   time.Date(2023, 12, 31, 0, 0, 0, 0, time.UTC),
+		Out:       "data.csv",
+	}
+
+	actualParsedArgs, err := parseArgs(
+		[]string{"s1", "s2", "s3"},
+		"2022-12-31",
+		"2023-12-31",
+		"data.csv",
+	)
+
+	if err != nil {
+		t.Errorf("Unexpected error while parsing args: %s", err)
+	}
+
+	if !reflect.DeepEqual(expectedParsedArgs, actualParsedArgs) {
+		t.Errorf(
+			"Parsed args do not match the exepcted structure:\n Expected: %v\n Actual: %v",
+			expectedParsedArgs,
+			actualParsedArgs,
+		)
 	}
 }

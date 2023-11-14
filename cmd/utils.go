@@ -52,7 +52,7 @@ func getWriterFunc(out string) (func(dataframe.DataFrame), error) {
 	}
 }
 
-type parsedDefaultArgs struct {
+type parsedRootArgs struct {
 	Symbols   []string
 	StartDate time.Time
 	EndDate   time.Time
@@ -66,21 +66,31 @@ func parseDate(dateStr string) (time.Time, error) {
 	return time.Parse("2006-01-02", dateStr)
 }
 
-func parseDefaultArgs(cmd *cobra.Command) (parsedDefaultArgs, error) {
-	symbols, _ := cmd.Flags().GetStringSlice("symbols")
-
-	startDateStr, _ := cmd.Flags().GetString("start-date")
+func parseArgs(
+	symbols []string,
+	startDateStr string,
+	endDateStr string,
+	out string,
+) (parsedRootArgs, error) {
 	startDate, err := parseDate(startDateStr)
-
-	endDateStr, _ := cmd.Flags().GetString("end-date")
 	endDate, err := parseDate(endDateStr)
 
-	out, _ := cmd.Flags().GetString("out")
-
-	return parsedDefaultArgs{
+	return parsedRootArgs{
 		Symbols:   symbols,
 		StartDate: startDate,
 		EndDate:   endDate,
 		Out:       out,
 	}, err
+}
+
+func parseRootArgs(cmd *cobra.Command) (parsedRootArgs, error) {
+	symbols, _ := cmd.Flags().GetStringSlice("symbols")
+
+	startDateStr, _ := cmd.Flags().GetString("start-date")
+
+	endDateStr, _ := cmd.Flags().GetString("end-date")
+
+	out, _ := cmd.Flags().GetString("out")
+
+	return parseArgs(symbols, startDateStr, endDateStr, out)
 }
