@@ -23,40 +23,44 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var tiingoCmd = &cobra.Command{
-	Use:   "tiingo",
-	Short: "Get financial data from Tiingo",
-	Run: func(cmd *cobra.Command, args []string) {
-		parsedArgs, err := parseDefaultArgs(cmd)
+func NewTiingoCmd() *cobra.Command {
+	return &cobra.Command{
+		Use:   "tiingo",
+		Short: "Get financial data from Tiingo",
+		Run: func(cmd *cobra.Command, args []string) {
+			parsedArgs, err := parseRootArgs(cmd)
 
-		if err != nil {
-			log.Fatal(err)
-		}
+			if err != nil {
+				log.Fatal(err)
+			}
 
-		apiKey, _ := cmd.Flags().GetString("api-key")
+			apiKey, _ := cmd.Flags().GetString("api-key")
 
-		config := reader.TiingoReaderConfig{
-			StartDate: parsedArgs.StartDate,
-			EndDate:   parsedArgs.EndDate,
-			ApiKey:    apiKey,
-		}
+			config := reader.TiingoReaderConfig{
+				Symbols:   parsedArgs.Symbols,
+				StartDate: parsedArgs.StartDate,
+				EndDate:   parsedArgs.EndDate,
+				ApiKey:    apiKey,
+			}
 
-		writerFunc, err := getWriterFunc(parsedArgs.Out)
-		if err != nil {
-			log.Fatal(err)
-		}
+			writerFunc, err := getWriterFunc(parsedArgs.Out)
+			if err != nil {
+				log.Fatal(err)
+			}
 
-		tiingoReader, err := reader.NewTiingoDailyReader(parsedArgs.Symbols, config)
-		if err != nil {
-			log.Fatal(err)
-		}
+			tiingoReader, err := reader.NewTiingoDailyReader(config)
+			if err != nil {
+				log.Fatal(err)
+			}
 
-		data := reader.GetData(tiingoReader)
-		writerFunc(data)
-	},
+			data := reader.GetData(tiingoReader)
+			writerFunc(data)
+		},
+	}
 }
 
 func init() {
+	tiingoCmd := NewTiingoCmd()
 	rootCmd.AddCommand(tiingoCmd)
 	tiingoCmd.LocalFlags().String("api-key", "", "[Optional] Pass your Tiingo API token here")
 }
