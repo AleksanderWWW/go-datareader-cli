@@ -3,7 +3,7 @@ module github.com/AleksanderWWW/go-datareader-cli
 go 1.19
 
 require (
-	github.com/AleksanderWWW/go-datareader v0.0.0-20231113134723-0c4cff835b9a
+	github.com/AleksanderWWW/go-datareader v0.0.0-20231114182233-1c4fd927941e
 	github.com/go-gota/gota v0.12.0
 	github.com/spf13/cobra v1.8.0
 )

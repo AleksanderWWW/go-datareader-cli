@@ -13,7 +13,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-
 package cmd
 
 import (
@@ -21,36 +20,33 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func getTiingoReader(cmd *cobra.Command, parsedArgs parsedRootArgs) (reader.DataReader, error) {
-	apiKey, _ := cmd.Flags().GetString("api-key")
-
-	config := reader.TiingoReaderConfig{
+func getStooqReader(cmd *cobra.Command, parsedArgs parsedRootArgs) (reader.DataReader, error) {
+	freq, _ := cmd.Flags().GetString("freq")
+	config := reader.StooqReaderConfig{
 		Symbols:   parsedArgs.Symbols,
 		StartDate: parsedArgs.StartDate,
 		EndDate:   parsedArgs.EndDate,
-		ApiKey:    apiKey,
+		Freq:      freq,
 	}
-
-	return reader.NewTiingoDailyReader(config)
+	return reader.NewStooqDataReader(config)
 }
 
-func NewTiingoCmd() *cobra.Command {
+// stooqCmd represents the stooq command
+func NewStooqCommand() *cobra.Command {
 	return &cobra.Command{
-		Use:   "tiingo",
-		Short: "Get financial data from Tiingo",
+		Use:   "stooq",
+		Short: "Get financial data from Stooq",
 		Run: func(cmd *cobra.Command, args []string) {
-
 			cmdRunner := runner{
-				getReader: getTiingoReader,
+				getReader: getStooqReader,
 			}
-
 			cmdRunner.run(cmd)
 		},
 	}
 }
 
 func init() {
-	tiingoCmd := NewTiingoCmd()
-	rootCmd.AddCommand(tiingoCmd)
-	tiingoCmd.Flags().String("api-key", "", "[Optional] Pass your Tiingo API token here")
+	stooqCmd := NewStooqCommand()
+	rootCmd.AddCommand(stooqCmd)
+	stooqCmd.Flags().String("freq", "", "Frequency for stooq reader (default: 'd' - daily)")
 }

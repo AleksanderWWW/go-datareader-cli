@@ -2,6 +2,8 @@ dmitri.shuralyov.com/gpu/mtl v0.0.0-20190408044501-666a987793e9/go.mod h1:H6x//7
 gioui.org v0.0.0-20210308172011-57750fc8a0a6/go.mod h1:RSH6KIUZ0p2xy5zHDxgAM4zumjgTw83q2ge/PI+yyw8=
 github.com/AleksanderWWW/go-datareader v0.0.0-20231113134723-0c4cff835b9a h1:/Sf1RIhG00WDO0scuA+o6sEoH15QtghU3M4mKmOMLrE=
 github.com/AleksanderWWW/go-datareader v0.0.0-20231113134723-0c4cff835b9a/go.mod h1:O0/t/EscJ4YWIo/M2VBF1iF0V9xI02eYJzM6Yz30bK8=
+github.com/AleksanderWWW/go-datareader v0.0.0-20231114182233-1c4fd927941e h1:UYxN8lY+3A9/tCU/mdmx2FhfaubMx2oOvx5wLSO5ngg=
+github.com/AleksanderWWW/go-datareader v0.0.0-20231114182233-1c4fd927941e/go.mod h1:O0/t/EscJ4YWIo/M2VBF1iF0V9xI02eYJzM6Yz30bK8=
 github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym/WlBOVXweHU+Q+/VP0lqqI8lqeDx9IjBqo=
 github.com/ajstarks/svgo v0.0.0-20180226025133-644b8db467af/go.mod h1:K08gAheRH3/J6wwsYMMT4xOr94bZjxIelGM0+d/wbFw=
 github.com/boombuler/barcode v1.0.0/go.mod h1:paBWMcWSl3LHKBqUq+rly7CNSldXjb2rDl3JlRe0mD8=
