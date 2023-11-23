@@ -14,36 +14,20 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package cmd
+package internal
 
 import (
-	"log"
-
 	"github.com/AleksanderWWW/go-datareader/reader"
 	"github.com/spf13/cobra"
 )
 
-type runner struct {
-	getReader func(cmd *cobra.Command, parsedArgs parsedRootArgs) (reader.DataReader, error)
-}
-
-func (r *runner) run(cmd *cobra.Command) {
-	parsedArgs, err := parseRootArgs(cmd)
-
-	if err != nil {
-		log.Fatal(err)
+func GetStooqReader(cmd *cobra.Command, parsedArgs parsedRootArgs) (reader.DataReader, error) {
+	freq, _ := cmd.Flags().GetString("freq")
+	config := reader.StooqReaderConfig{
+		Symbols:   parsedArgs.Symbols,
+		StartDate: parsedArgs.StartDate,
+		EndDate:   parsedArgs.EndDate,
+		Freq:      freq,
 	}
-
-	writerFunc, err := getWriterFunc(parsedArgs.Out)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	dataReader, err := r.getReader(cmd, parsedArgs)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	data := reader.GetData(dataReader)
-	writerFunc(data)
+	return reader.NewStooqDataReader(config)
 }

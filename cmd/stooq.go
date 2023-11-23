@@ -16,20 +16,9 @@ limitations under the License.
 package cmd
 
 import (
-	"github.com/AleksanderWWW/go-datareader/reader"
+	"github.com/AleksanderWWW/go-datareader-cli/internal"
 	"github.com/spf13/cobra"
 )
-
-func getStooqReader(cmd *cobra.Command, parsedArgs parsedRootArgs) (reader.DataReader, error) {
-	freq, _ := cmd.Flags().GetString("freq")
-	config := reader.StooqReaderConfig{
-		Symbols:   parsedArgs.Symbols,
-		StartDate: parsedArgs.StartDate,
-		EndDate:   parsedArgs.EndDate,
-		Freq:      freq,
-	}
-	return reader.NewStooqDataReader(config)
-}
 
 // stooqCmd represents the stooq command
 func NewStooqCommand() *cobra.Command {
@@ -37,10 +26,10 @@ func NewStooqCommand() *cobra.Command {
 		Use:   "stooq",
 		Short: "Get financial data from Stooq",
 		Run: func(cmd *cobra.Command, args []string) {
-			cmdRunner := runner{
-				getReader: getStooqReader,
+			cmdRunner := internal.Runner{
+				GetReader: internal.GetStooqReader,
 			}
-			cmdRunner.run(cmd)
+			cmdRunner.Run(cmd)
 		},
 	}
 }
