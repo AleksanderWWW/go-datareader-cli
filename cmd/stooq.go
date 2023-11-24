@@ -13,7 +13,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-
 package cmd
 
 import (
@@ -23,17 +22,16 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func NewTiingoCmd() *cobra.Command {
+// stooqCmd represents the stooq command
+func NewStooqCommand() *cobra.Command {
 	return &cobra.Command{
-		Use:   "tiingo",
-		Short: "Get financial data from Tiingo",
+		Use:   "stooq",
+		Short: "Get financial data from Stooq",
 		Run: func(cmd *cobra.Command, args []string) {
-
 			cmdRunner := internal.Runner{
 				Cmd:       cmd,
-				GetReader: internal.GetTiingoReader,
+				GetReader: internal.GetStooqReader,
 			}
-
 			err := cmdRunner.Run()
 			if err != nil {
 				log.Fatal(err)
@@ -43,7 +41,7 @@ func NewTiingoCmd() *cobra.Command {
 }
 
 func init() {
-	tiingoCmd := NewTiingoCmd()
-	rootCmd.AddCommand(tiingoCmd)
-	tiingoCmd.Flags().String("api-key", "", "[Optional] Pass your Tiingo API token here")
+	stooqCmd := NewStooqCommand()
+	rootCmd.AddCommand(stooqCmd)
+	stooqCmd.Flags().String("freq", "", "Frequency for stooq reader (default: 'd' - daily)")
 }

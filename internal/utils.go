@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package cmd
+package internal
 
 import (
 	"fmt"
@@ -32,21 +32,23 @@ func isCSV(name string) bool {
 	return len(splited) >= 2 && strings.ToLower(splited[len(splited)-1]) == "csv"
 }
 
-func getWriterFunc(out string) (func(dataframe.DataFrame), error) {
+func getWriterFunc(out string) (func(dataframe.DataFrame) error, error) {
 	if out == "stdout" {
-		return func(data dataframe.DataFrame) {
+		return func(data dataframe.DataFrame) error {
 			fmt.Println(data)
+			return nil
 		}, nil
 
 	} else if isCSV(out) {
-		return func(data dataframe.DataFrame) {
+		return func(data dataframe.DataFrame) error {
 			f, err := os.Create(out)
 			if err != nil {
 				f.Close()
 				log.Fatal(err)
 			}
-			data.WriteCSV(f)
+			return data.WriteCSV(f)
 		}, nil
+
 	} else {
 		return nil, fmt.Errorf("Unsupported writer option: '%s'", out)
 	}

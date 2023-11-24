@@ -14,36 +14,35 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package cmd
+package internal
 
 import (
-	"log"
-
-	"github.com/AleksanderWWW/go-datareader-cli/internal"
+	"github.com/AleksanderWWW/go-datareader/reader"
 	"github.com/spf13/cobra"
 )
 
-func NewTiingoCmd() *cobra.Command {
-	return &cobra.Command{
-		Use:   "tiingo",
-		Short: "Get financial data from Tiingo",
-		Run: func(cmd *cobra.Command, args []string) {
-
-			cmdRunner := internal.Runner{
-				Cmd:       cmd,
-				GetReader: internal.GetTiingoReader,
-			}
-
-			err := cmdRunner.Run()
-			if err != nil {
-				log.Fatal(err)
-			}
-		},
-	}
+type Runner struct {
+	Cmd       *cobra.Command
+	GetReader func(cmd *cobra.Command, parsedArgs parsedRootArgs) (reader.DataReader, error)
 }
 
-func init() {
-	tiingoCmd := NewTiingoCmd()
-	rootCmd.AddCommand(tiingoCmd)
-	tiingoCmd.Flags().String("api-key", "", "[Optional] Pass your Tiingo API token here")
+func (r *Runner) Run() error {
+	parsedArgs, err := parseRootArgs(r.Cmd)
+
+	if err != nil {
+		return err
+	}
+
+	writerFunc, err := getWriterFunc(parsedArgs.Out)
+	if err != nil {
+		return err
+	}
+
+	dataReader, err := r.GetReader(r.Cmd, parsedArgs)
+	if err != nil {
+		return err
+	}
+
+	data := reader.GetData(dataReader)
+	return writerFunc(data)
 }

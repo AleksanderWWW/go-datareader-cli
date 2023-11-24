@@ -14,36 +14,22 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package cmd
+package internal
 
 import (
-	"log"
-
-	"github.com/AleksanderWWW/go-datareader-cli/internal"
+	"github.com/AleksanderWWW/go-datareader/reader"
 	"github.com/spf13/cobra"
 )
 
-func NewTiingoCmd() *cobra.Command {
-	return &cobra.Command{
-		Use:   "tiingo",
-		Short: "Get financial data from Tiingo",
-		Run: func(cmd *cobra.Command, args []string) {
+func GetTiingoReader(cmd *cobra.Command, parsedArgs parsedRootArgs) (reader.DataReader, error) {
+	apiKey, _ := cmd.Flags().GetString("api-key")
 
-			cmdRunner := internal.Runner{
-				Cmd:       cmd,
-				GetReader: internal.GetTiingoReader,
-			}
-
-			err := cmdRunner.Run()
-			if err != nil {
-				log.Fatal(err)
-			}
-		},
+	config := reader.TiingoReaderConfig{
+		Symbols:   parsedArgs.Symbols,
+		StartDate: parsedArgs.StartDate,
+		EndDate:   parsedArgs.EndDate,
+		ApiKey:    apiKey,
 	}
-}
 
-func init() {
-	tiingoCmd := NewTiingoCmd()
-	rootCmd.AddCommand(tiingoCmd)
-	tiingoCmd.Flags().String("api-key", "", "[Optional] Pass your Tiingo API token here")
+	return reader.NewTiingoDailyReader(config)
 }
