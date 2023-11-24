@@ -16,10 +16,23 @@ limitations under the License.
 package cmd
 
 import (
+	"log"
 	"os"
 
+	"github.com/AleksanderWWW/go-datareader-cli/internal"
 	"github.com/spf13/cobra"
 )
+
+func runFunc(cmd *cobra.Command, getReaderFunc internal.GetReaderFuncType) {
+	cmdRunner := internal.Runner{
+		Cmd:       cmd,
+		GetReader: getReaderFunc,
+	}
+	err := cmdRunner.Run()
+	if err != nil {
+		log.Fatal(err)
+	}
+}
 
 var rootCmd = &cobra.Command{
 	Use:   "go-datareader",
