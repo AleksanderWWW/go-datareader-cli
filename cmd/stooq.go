@@ -16,6 +16,8 @@ limitations under the License.
 package cmd
 
 import (
+	"log"
+
 	"github.com/AleksanderWWW/go-datareader-cli/internal"
 	"github.com/spf13/cobra"
 )
@@ -27,9 +29,13 @@ func NewStooqCommand() *cobra.Command {
 		Short: "Get financial data from Stooq",
 		Run: func(cmd *cobra.Command, args []string) {
 			cmdRunner := internal.Runner{
+				Cmd:       cmd,
 				GetReader: internal.GetStooqReader,
 			}
-			cmdRunner.Run(cmd)
+			err := cmdRunner.Run()
+			if err != nil {
+				log.Fatal(err)
+			}
 		},
 	}
 }

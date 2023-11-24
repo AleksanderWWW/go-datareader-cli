@@ -17,33 +17,32 @@ limitations under the License.
 package internal
 
 import (
-	"log"
-
 	"github.com/AleksanderWWW/go-datareader/reader"
 	"github.com/spf13/cobra"
 )
 
 type Runner struct {
+	Cmd       *cobra.Command
 	GetReader func(cmd *cobra.Command, parsedArgs parsedRootArgs) (reader.DataReader, error)
 }
 
-func (r *Runner) Run(cmd *cobra.Command) {
-	parsedArgs, err := parseRootArgs(cmd)
+func (r *Runner) Run() error {
+	parsedArgs, err := parseRootArgs(r.Cmd)
 
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	writerFunc, err := getWriterFunc(parsedArgs.Out)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
-	dataReader, err := r.GetReader(cmd, parsedArgs)
+	dataReader, err := r.GetReader(r.Cmd, parsedArgs)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	data := reader.GetData(dataReader)
-	writerFunc(data)
+	return writerFunc(data)
 }
