@@ -6,3 +6,4 @@
 
 ### Changes
 - Handle default date values ([#2](https://github.com/AleksanderWWW/go-datareader-cli/pull/2))
+- Create `runFunc` to simplify command running ([#5](https://github.com/AleksanderWWW/go-datareader-cli/pull/5))

@@ -21,9 +21,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
+type GetReaderFuncType func(*cobra.Command, parsedRootArgs) (reader.DataReader, error)
+
 type Runner struct {
 	Cmd       *cobra.Command
-	GetReader func(cmd *cobra.Command, parsedArgs parsedRootArgs) (reader.DataReader, error)
+	GetReader GetReaderFuncType
 }
 
 func (r *Runner) Run() error {
