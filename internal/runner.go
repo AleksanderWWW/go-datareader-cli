@@ -41,7 +41,7 @@ func (r *Runner) Run() error {
 		return err
 	}
 
-	parser, err := whichParser(parsedArgs.Config)
+	parser, err := config.WhichParser(parsedArgs.Config)
 	if err != nil {
 		return err
 	}

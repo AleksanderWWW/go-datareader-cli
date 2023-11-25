@@ -16,9 +16,25 @@ limitations under the License.
 
 package config
 
-import "github.com/AleksanderWWW/go-datareader/reader"
+import (
+	"fmt"
+	"strings"
+
+	"github.com/AleksanderWWW/go-datareader/reader"
+)
 
 type Parser interface {
 	ParseStooqConfig() (reader.StooqReaderConfig, error)
 	ParseTiingoConfig() (reader.TiingoReaderConfig, error)
+}
+
+func WhichParser(path string) (Parser, error) {
+	if path == "" {
+		return nil, nil
+	}
+	splitted := strings.Split(path, ".")
+	if splitted[len(splitted)-1] == "toml" {
+		return NewTomlConfigParser(path), nil
+	}
+	return nil, fmt.Errorf("Cannot find an appropriate config for path '%s'", path)
 }
