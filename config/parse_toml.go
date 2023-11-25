@@ -18,8 +18,8 @@ package config
 
 import (
 	"fmt"
-	"time"
 
+	"github.com/AleksanderWWW/go-datareader-cli/utils"
 	"github.com/AleksanderWWW/go-datareader/reader"
 	"github.com/BurntSushi/toml"
 )
@@ -56,11 +56,11 @@ func (t *TomlConfigParser) ParseStooqConfig() (reader.StooqReaderConfig, error) 
 		return reader.StooqReaderConfig{}, fmt.Errorf("Invalid `Reader` field in the config file. Expected: `stooq`. Got: %s", conf.Reader)
 	}
 
-	startDate, err := time.Parse("2006-01-02", conf.Config.StartDate)
+	startDate, err := utils.ParseDate(conf.Config.StartDate)
 	if err != nil {
 		return reader.StooqReaderConfig{}, err
 	}
-	endDate, err := time.Parse("2006-01-02", conf.Config.EndDate)
+	endDate, err := utils.ParseDate(conf.Config.EndDate)
 	if err != nil {
 		return reader.StooqReaderConfig{}, err
 	}

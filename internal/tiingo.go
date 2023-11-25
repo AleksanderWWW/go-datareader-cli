@@ -18,11 +18,12 @@ package internal
 
 import (
 	"github.com/AleksanderWWW/go-datareader-cli/config"
+	"github.com/AleksanderWWW/go-datareader-cli/utils"
 	"github.com/AleksanderWWW/go-datareader/reader"
 	"github.com/spf13/cobra"
 )
 
-func GetTiingoReader(cmd *cobra.Command, parsedArgs parsedRootArgs, configParser config.Parser) (reader.DataReader, error) {
+func GetTiingoReader(cmd *cobra.Command, parsedArgs utils.ParsedRootArgs, configParser config.Parser) (reader.DataReader, error) {
 	apiKey, _ := cmd.Flags().GetString("api-key")
 
 	var config reader.TiingoReaderConfig

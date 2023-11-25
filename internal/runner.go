@@ -18,11 +18,12 @@ package internal
 
 import (
 	"github.com/AleksanderWWW/go-datareader-cli/config"
+	"github.com/AleksanderWWW/go-datareader-cli/utils"
 	"github.com/AleksanderWWW/go-datareader/reader"
 	"github.com/spf13/cobra"
 )
 
-type GetReaderFuncType func(*cobra.Command, parsedRootArgs, config.Parser) (reader.DataReader, error)
+type GetReaderFuncType func(*cobra.Command, utils.ParsedRootArgs, config.Parser) (reader.DataReader, error)
 
 type Runner struct {
 	Cmd       *cobra.Command
@@ -30,13 +31,13 @@ type Runner struct {
 }
 
 func (r *Runner) Run() error {
-	parsedArgs, err := parseRootArgs(r.Cmd)
+	parsedArgs, err := utils.ParseRootArgs(r.Cmd)
 
 	if err != nil {
 		return err
 	}
 
-	writerFunc, err := getWriterFunc(parsedArgs.Out)
+	writerFunc, err := utils.GetWriterFunc(parsedArgs.Out)
 	if err != nil {
 		return err
 	}

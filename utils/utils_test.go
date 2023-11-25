@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package internal
+package utils
 
 import (
 	"reflect"
@@ -56,7 +56,7 @@ func TestIsCSV(t *testing.T) {
 	}
 
 	for _, testItem := range tests {
-		out := isCSV(testItem.in)
+		out := IsCSV(testItem.in)
 		if out != testItem.expectedOut {
 			t.Errorf("Failed checking if CSV:\n In: %s\n Expected: %t\n Actual: %t", testItem.in, testItem.expectedOut, out)
 		}
@@ -78,14 +78,14 @@ func TestGetWriterFunc(t *testing.T) {
 	}
 
 	for _, goodOut := range goodOuts {
-		_, err := getWriterFunc(goodOut)
+		_, err := GetWriterFunc(goodOut)
 		if err != nil {
 			t.Errorf("Unexpected error for %s - %s", goodOut, err)
 		}
 	}
 
 	for _, badOut := range badOuts {
-		_, err := getWriterFunc(badOut)
+		_, err := GetWriterFunc(badOut)
 		if err == nil {
 			t.Errorf("Expected error for %s, but did not get it", badOut)
 		}
@@ -110,7 +110,7 @@ func TestParseDate(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		out, err := parseDate(test.in)
+		out, err := ParseDate(test.in)
 
 		if err != nil {
 			t.Errorf("Unexpected error while parsing dates - %s", err)
@@ -127,7 +127,7 @@ func TestParseDate(t *testing.T) {
 }
 
 func TestParseArgs(t *testing.T) {
-	expectedParsedArgs := parsedRootArgs{
+	expectedParsedArgs := ParsedRootArgs{
 		Symbols:   []string{"s1", "s2", "s3"},
 		StartDate: time.Date(2022, 12, 31, 0, 0, 0, 0, time.UTC),
 		EndDate:   time.Date(2023, 12, 31, 0, 0, 0, 0, time.UTC),
@@ -135,7 +135,7 @@ func TestParseArgs(t *testing.T) {
 		Config:    "config.toml",
 	}
 
-	actualParsedArgs, err := parseArgs(
+	actualParsedArgs, err := ParseArgs(
 		[]string{"s1", "s2", "s3"},
 		"2022-12-31",
 		"2023-12-31",

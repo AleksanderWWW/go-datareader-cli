@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/AleksanderWWW/go-datareader-cli/config"
+	"github.com/AleksanderWWW/go-datareader-cli/utils"
 	"github.com/AleksanderWWW/go-datareader/reader"
 	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/assert"
@@ -21,7 +22,7 @@ func TestRunnerFailure(t *testing.T) {
 
 	runner := Runner{
 		Cmd: cmd,
-		GetReader: func(cmd *cobra.Command, parsedArgs parsedRootArgs, configParser config.Parser) (reader.DataReader, error) {
+		GetReader: func(cmd *cobra.Command, parsedArgs utils.ParsedRootArgs, configParser config.Parser) (reader.DataReader, error) {
 			return nil, fmt.Errorf(errorMsg)
 		},
 	}
@@ -37,7 +38,7 @@ func TestRunnerSuccess(t *testing.T) {
 
 	runner := Runner{
 		Cmd: cmd,
-		GetReader: func(cmd *cobra.Command, parsedArgs parsedRootArgs, configParser config.Parser) (reader.DataReader, error) {
+		GetReader: func(cmd *cobra.Command, parsedArgs utils.ParsedRootArgs, configParser config.Parser) (reader.DataReader, error) {
 			return NewMockReader()
 		},
 	}
