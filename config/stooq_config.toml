@@ -1,0 +1,7 @@
+Reader = "stooq"
+
+[config]
+Symbols = [ "PKO", "KGH", "PZU" ]
+StartDate = "2022-11-25"
+EndDate = "2023-11-25"
+Freq = "d"
