@@ -23,6 +23,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/AleksanderWWW/go-datareader-cli/config"
 	"github.com/go-gota/gota/dataframe"
 	"github.com/spf13/cobra"
 )
@@ -59,6 +60,7 @@ type parsedRootArgs struct {
 	StartDate time.Time
 	EndDate   time.Time
 	Out       string
+	Config    string
 }
 
 func parseDate(dateStr string) (time.Time, error) {
@@ -73,6 +75,7 @@ func parseArgs(
 	startDateStr string,
 	endDateStr string,
 	out string,
+	config string,
 ) (parsedRootArgs, error) {
 	startDate, err := parseDate(startDateStr)
 	endDate, err := parseDate(endDateStr)
@@ -82,6 +85,7 @@ func parseArgs(
 		StartDate: startDate,
 		EndDate:   endDate,
 		Out:       out,
+		Config:    config,
 	}, err
 }
 
@@ -94,5 +98,18 @@ func parseRootArgs(cmd *cobra.Command) (parsedRootArgs, error) {
 
 	out, _ := cmd.Flags().GetString("out")
 
-	return parseArgs(symbols, startDateStr, endDateStr, out)
+	config, _ := cmd.Flags().GetString("config")
+
+	return parseArgs(symbols, startDateStr, endDateStr, out, config)
+}
+
+func whichParser(path string) (config.Parser, error) {
+	if path == "" {
+		return nil, nil
+	}
+	splitted := strings.Split(path, ".")
+	if splitted[len(splitted)-1] == "toml" {
+		return config.NewTomlConfigParser(path), nil
+	}
+	return nil, fmt.Errorf("Cannot find an appropriate config for path '%s'", path)
 }

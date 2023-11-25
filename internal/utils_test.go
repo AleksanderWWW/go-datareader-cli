@@ -132,6 +132,7 @@ func TestParseArgs(t *testing.T) {
 		StartDate: time.Date(2022, 12, 31, 0, 0, 0, 0, time.UTC),
 		EndDate:   time.Date(2023, 12, 31, 0, 0, 0, 0, time.UTC),
 		Out:       "data.csv",
+		Config:    "config.toml",
 	}
 
 	actualParsedArgs, err := parseArgs(
@@ -139,6 +140,7 @@ func TestParseArgs(t *testing.T) {
 		"2022-12-31",
 		"2023-12-31",
 		"data.csv",
+		"config.toml",
 	)
 
 	if err != nil {

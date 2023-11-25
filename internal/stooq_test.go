@@ -10,12 +10,12 @@ import (
 func TestStooq(t *testing.T) {
 	cmd := &cobra.Command{}
 	cmd.Flags().String("freq", "d", "")
-	_, err := GetStooqReader(cmd, parsedRootArgs{})
+	_, err := GetStooqReader(cmd, parsedRootArgs{}, nil)
 
 	if err != nil {
 		t.Error(err)
 	}
 
-	_, err = GetStooqReader(&cobra.Command{}, parsedRootArgs{})
+	_, err = GetStooqReader(&cobra.Command{}, parsedRootArgs{}, nil)
 	assert.Error(t, err)
 }

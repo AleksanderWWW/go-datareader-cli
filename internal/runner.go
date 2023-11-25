@@ -17,11 +17,12 @@ limitations under the License.
 package internal
 
 import (
+	"github.com/AleksanderWWW/go-datareader-cli/config"
 	"github.com/AleksanderWWW/go-datareader/reader"
 	"github.com/spf13/cobra"
 )
 
-type GetReaderFuncType func(*cobra.Command, parsedRootArgs) (reader.DataReader, error)
+type GetReaderFuncType func(*cobra.Command, parsedRootArgs, config.Parser) (reader.DataReader, error)
 
 type Runner struct {
 	Cmd       *cobra.Command
@@ -40,7 +41,12 @@ func (r *Runner) Run() error {
 		return err
 	}
 
-	dataReader, err := r.GetReader(r.Cmd, parsedArgs)
+	parser, err := whichParser(parsedArgs.Config)
+	if err != nil {
+		return err
+	}
+
+	dataReader, err := r.GetReader(r.Cmd, parsedArgs, parser)
 	if err != nil {
 		return err
 	}

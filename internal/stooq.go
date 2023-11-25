@@ -17,17 +17,29 @@ limitations under the License.
 package internal
 
 import (
+	"github.com/AleksanderWWW/go-datareader-cli/config"
 	"github.com/AleksanderWWW/go-datareader/reader"
 	"github.com/spf13/cobra"
 )
 
-func GetStooqReader(cmd *cobra.Command, parsedArgs parsedRootArgs) (reader.DataReader, error) {
+func GetStooqReader(cmd *cobra.Command, parsedArgs parsedRootArgs, configParser config.Parser) (reader.DataReader, error) {
 	freq, _ := cmd.Flags().GetString("freq")
-	config := reader.StooqReaderConfig{
-		Symbols:   parsedArgs.Symbols,
-		StartDate: parsedArgs.StartDate,
-		EndDate:   parsedArgs.EndDate,
-		Freq:      freq,
+
+	var config reader.StooqReaderConfig
+	var err error
+
+	if parsedArgs.Config == "" {
+		config = reader.StooqReaderConfig{
+			Symbols:   parsedArgs.Symbols,
+			StartDate: parsedArgs.StartDate,
+			EndDate:   parsedArgs.EndDate,
+			Freq:      freq,
+		}
+	} else {
+		config, err = configParser.ParseStooqConfig()
+		if err != nil {
+			return &reader.StooqDataReader{}, err
+		}
 	}
 	return reader.NewStooqDataReader(config)
 }
