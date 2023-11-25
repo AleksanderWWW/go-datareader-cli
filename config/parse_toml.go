@@ -74,5 +74,42 @@ func (t *TomlConfigParser) ParseStooqConfig() (reader.StooqReaderConfig, error) 
 }
 
 func (t *TomlConfigParser) ParseTiingoConfig() (reader.TiingoReaderConfig, error) {
-	return reader.TiingoReaderConfig{}, nil
+	type config struct {
+		Symbols   []string
+		StartDate string
+		EndDate   string
+		ApiKey    string
+	}
+
+	type tiingoConfig struct {
+		Reader string
+		Config config
+	}
+
+	var conf tiingoConfig
+
+	_, err := toml.DecodeFile(t.ConfigPath, &conf)
+	if err != nil {
+		return reader.TiingoReaderConfig{}, err
+	}
+
+	if conf.Reader != "tiingo" {
+		return reader.TiingoReaderConfig{}, fmt.Errorf("Invalid `Reader` field in the config file. Expected: `tiingo`. Got: %s", conf.Reader)
+	}
+
+	startDate, err := utils.ParseDate(conf.Config.StartDate)
+	if err != nil {
+		return reader.TiingoReaderConfig{}, err
+	}
+	endDate, err := utils.ParseDate(conf.Config.EndDate)
+	if err != nil {
+		return reader.TiingoReaderConfig{}, err
+	}
+
+	return reader.TiingoReaderConfig{
+		Symbols:   conf.Config.Symbols,
+		StartDate: startDate,
+		EndDate:   endDate,
+		ApiKey:    conf.Config.ApiKey,
+	}, nil
 }
