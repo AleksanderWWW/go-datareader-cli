@@ -20,6 +20,9 @@ import (
 	"reflect"
 	"testing"
 	"time"
+
+	"github.com/spf13/cobra"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestIsCSV(t *testing.T) {
@@ -154,4 +157,32 @@ func TestParseArgs(t *testing.T) {
 			actualParsedArgs,
 		)
 	}
+}
+
+func TestParseRootArgs(t *testing.T) {
+	cmd := &cobra.Command{}
+	cmd.Flags().StringSlice("symbols", []string{"s1", "s2", "s3"}, "")
+	cmd.Flags().String("start-date", "2023-11-11", "")
+	cmd.Flags().String("end-date", "2023-11-25", "")
+	cmd.Flags().String("out", "test.csv", "")
+	cmd.Flags().String("config", "config.toml", "")
+
+	rootArgs, err := ParseRootArgs(cmd)
+	if err != nil {
+		t.Error(err)
+	}
+
+	startDate, _ := ParseDate("2023-11-11")
+	endDate, _ := ParseDate("2023-11-25")
+	assert.Equal(
+		t,
+		ParsedRootArgs{
+			Symbols:   []string{"s1", "s2", "s3"},
+			StartDate: startDate,
+			EndDate:   endDate,
+			Out:       "test.csv",
+			Config:    "config.toml",
+		},
+		rootArgs,
+	)
 }
