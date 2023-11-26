@@ -18,7 +18,6 @@ package utils
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"strings"
 	"time"
@@ -42,9 +41,10 @@ func GetWriterFunc(out string) (func(dataframe.DataFrame) error, error) {
 	} else if IsCSV(out) {
 		return func(data dataframe.DataFrame) error {
 			f, err := os.Create(out)
+			defer f.Close()
+
 			if err != nil {
-				f.Close()
-				log.Fatal(err)
+				return err
 			}
 			return data.WriteCSV(f)
 		}, nil
@@ -77,7 +77,13 @@ func ParseArgs(
 	config string,
 ) (ParsedRootArgs, error) {
 	startDate, err := ParseDate(startDateStr)
+	if err != nil {
+		return ParsedRootArgs{}, err
+	}
 	endDate, err := ParseDate(endDateStr)
+	if err != nil {
+		return ParsedRootArgs{}, err
+	}
 
 	return ParsedRootArgs{
 		Symbols:   symbols,
@@ -85,7 +91,7 @@ func ParseArgs(
 		EndDate:   endDate,
 		Out:       out,
 		Config:    config,
-	}, err
+	}, nil
 }
 
 func ParseRootArgs(cmd *cobra.Command) (ParsedRootArgs, error) {

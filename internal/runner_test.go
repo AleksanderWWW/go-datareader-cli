@@ -31,6 +31,10 @@ func NewMockReader() (*reader.MockReader, error) {
 	return &reader.MockReader{}, nil
 }
 
+func getReader(cmd *cobra.Command, parsedArgs utils.ParsedRootArgs, configParser config.Parser) (reader.DataReader, error) {
+	return NewMockReader()
+}
+
 func TestRunnerFailure(t *testing.T) {
 	errorMsg := "Error in GetReader"
 	cmd := &cobra.Command{}
@@ -46,6 +50,43 @@ func TestRunnerFailure(t *testing.T) {
 	err := runner.Run()
 
 	assert.EqualError(t, err, errorMsg)
+}
+
+func TestRunWrongOut(t *testing.T) {
+	cmd := &cobra.Command{}
+	cmd.Flags().String("out", "unsupported-out", "")
+	runner := Runner{
+		Cmd:       cmd,
+		GetReader: getReader,
+	}
+
+	err := runner.Run()
+	assert.EqualError(t, err, "Unsupported writer option: 'unsupported-out'")
+}
+
+func TestRunWrongDateFormat(t *testing.T) {
+	cmd := &cobra.Command{}
+	cmd.Flags().String("out", "stdout", "")
+	cmd.Flags().String("start-date", "0-0-0", "")
+	runner := Runner{
+		Cmd:       cmd,
+		GetReader: getReader,
+	}
+	err := runner.Run()
+	assert.EqualError(t, err, "parsing time \"0-0-0\" as \"2006-01-02\": cannot parse \"0\" as \"2006\"")
+}
+
+func TestRunWrongConfig(t *testing.T) {
+	cmd := &cobra.Command{}
+	cmd.Flags().String("out", "stdout", "")
+	cmd.Flags().String("config", "invalid-config", "")
+
+	runner := Runner{
+		Cmd:       cmd,
+		GetReader: getReader,
+	}
+	err := runner.Run()
+	assert.EqualError(t, err, "Cannot find an appropriate config for path 'invalid-config'")
 }
 
 func TestRunnerSuccess(t *testing.T) {

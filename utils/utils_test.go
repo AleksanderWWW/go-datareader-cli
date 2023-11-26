@@ -17,10 +17,12 @@ limitations under the License.
 package utils
 
 import (
+	"os"
 	"reflect"
 	"testing"
 	"time"
 
+	"github.com/go-gota/gota/dataframe"
 	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/assert"
 )
@@ -93,6 +95,26 @@ func TestGetWriterFunc(t *testing.T) {
 			t.Errorf("Expected error for %s, but did not get it", badOut)
 		}
 	}
+}
+
+func TestWriterFunctions(t *testing.T) {
+	// Create sample DataFrame for testing
+	data := dataframe.DataFrame{}
+
+	// Test writing to stdout
+	stdoutWriter, _ := GetWriterFunc("stdout")
+	err := stdoutWriter(data)
+	assert.NoError(t, err)
+
+	// Test writing to CSV file
+	csvFileName := "test.csv"
+	csvWriter, _ := GetWriterFunc(csvFileName)
+	err = csvWriter(data)
+	assert.NoError(t, err)
+
+	// Clean up: Remove the created CSV file
+	err = os.Remove(csvFileName)
+	assert.NoError(t, err)
 }
 
 func TestParseDate(t *testing.T) {

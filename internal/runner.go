@@ -32,7 +32,6 @@ type Runner struct {
 
 func (r *Runner) Run() error {
 	parsedArgs, err := utils.ParseRootArgs(r.Cmd)
-
 	if err != nil {
 		return err
 	}
