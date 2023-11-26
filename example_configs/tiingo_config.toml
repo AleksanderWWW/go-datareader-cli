@@ -1,0 +1,7 @@
+Reader = "tiingo"
+
+[config]
+Symbols = [ "ZZZOF", "000001" ]
+StartDate = "2022-11-25"
+EndDate = "2023-11-25"
+ApiKey = ""

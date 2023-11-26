@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package internal
+package utils
 
 import (
 	"fmt"
@@ -27,19 +27,19 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func isCSV(name string) bool {
+func IsCSV(name string) bool {
 	splited := strings.Split(name, ".")
 	return len(splited) >= 2 && strings.ToLower(splited[len(splited)-1]) == "csv"
 }
 
-func getWriterFunc(out string) (func(dataframe.DataFrame) error, error) {
+func GetWriterFunc(out string) (func(dataframe.DataFrame) error, error) {
 	if out == "stdout" {
 		return func(data dataframe.DataFrame) error {
 			fmt.Println(data)
 			return nil
 		}, nil
 
-	} else if isCSV(out) {
+	} else if IsCSV(out) {
 		return func(data dataframe.DataFrame) error {
 			f, err := os.Create(out)
 			if err != nil {
@@ -54,38 +54,41 @@ func getWriterFunc(out string) (func(dataframe.DataFrame) error, error) {
 	}
 }
 
-type parsedRootArgs struct {
+type ParsedRootArgs struct {
 	Symbols   []string
 	StartDate time.Time
 	EndDate   time.Time
 	Out       string
+	Config    string
 }
 
-func parseDate(dateStr string) (time.Time, error) {
+func ParseDate(dateStr string) (time.Time, error) {
 	if dateStr == "" {
 		return time.Time{}, nil
 	}
 	return time.Parse("2006-01-02", dateStr)
 }
 
-func parseArgs(
+func ParseArgs(
 	symbols []string,
 	startDateStr string,
 	endDateStr string,
 	out string,
-) (parsedRootArgs, error) {
-	startDate, err := parseDate(startDateStr)
-	endDate, err := parseDate(endDateStr)
+	config string,
+) (ParsedRootArgs, error) {
+	startDate, err := ParseDate(startDateStr)
+	endDate, err := ParseDate(endDateStr)
 
-	return parsedRootArgs{
+	return ParsedRootArgs{
 		Symbols:   symbols,
 		StartDate: startDate,
 		EndDate:   endDate,
 		Out:       out,
+		Config:    config,
 	}, err
 }
 
-func parseRootArgs(cmd *cobra.Command) (parsedRootArgs, error) {
+func ParseRootArgs(cmd *cobra.Command) (ParsedRootArgs, error) {
 	symbols, _ := cmd.Flags().GetStringSlice("symbols")
 
 	startDateStr, _ := cmd.Flags().GetString("start-date")
@@ -94,5 +97,7 @@ func parseRootArgs(cmd *cobra.Command) (parsedRootArgs, error) {
 
 	out, _ := cmd.Flags().GetString("out")
 
-	return parseArgs(symbols, startDateStr, endDateStr, out)
+	config, _ := cmd.Flags().GetString("config")
+
+	return ParseArgs(symbols, startDateStr, endDateStr, out, config)
 }

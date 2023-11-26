@@ -14,20 +14,27 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package internal
+package config
 
 import (
-	"testing"
+	"fmt"
+	"strings"
 
-	"github.com/AleksanderWWW/go-datareader-cli/utils"
-	"github.com/spf13/cobra"
+	"github.com/AleksanderWWW/go-datareader/reader"
 )
 
-func TestTiingo(t *testing.T) {
+type Parser interface {
+	ParseStooqConfig() (reader.StooqReaderConfig, error)
+	ParseTiingoConfig() (reader.TiingoReaderConfig, error)
+}
 
-	_, err := GetTiingoReader(&cobra.Command{}, utils.ParsedRootArgs{}, nil)
-
-	if err != nil {
-		t.Error(err)
+func WhichParser(path string) (Parser, error) {
+	if path == "" {
+		return nil, nil
 	}
+	splitted := strings.Split(path, ".")
+	if splitted[len(splitted)-1] == "toml" {
+		return NewTomlConfigParser(path), nil
+	}
+	return nil, fmt.Errorf("Cannot find an appropriate config for path '%s'", path)
 }

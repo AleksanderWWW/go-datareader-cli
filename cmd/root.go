@@ -51,5 +51,6 @@ func init() {
 	rootCmd.PersistentFlags().StringSlice("symbols", []string{}, "List of symbols to scrape data for in the form --symbols=s1,s2,...sn")
 	rootCmd.PersistentFlags().String("start-date", "", "Start date in the format YYYY-mm-dd e.g. --start-date=2023-07-31. Default depends on the provider used.")
 	rootCmd.PersistentFlags().String("end-date", "", "End date in the format YYYY-mm-dd e.g. --end-date=2023-07-31. Default depends on the provider used.")
-	rootCmd.PersistentFlags().String("out", "stdout", "Where to write the downloaded data. Leaving the default just prints to console")
+	rootCmd.PersistentFlags().String("out", "stdout", "Where to write the downloaded data. Leaving the default just prints to console.")
+	rootCmd.PersistentFlags().String("config", "", "Config path with reader settings. The settings takes precedence over all other arguments apart from `out`.")
 }
