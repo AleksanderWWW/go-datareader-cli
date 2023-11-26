@@ -152,3 +152,42 @@ func (t *TomlConfigParser) ParseBankOfCanadaConfig() (reader.BOCReaderConfig, er
 		EndDate:   endDate,
 	}, nil
 }
+
+func (t *TomlConfigParser) ParseFredConfig() (reader.FredReaderConfig, error) {
+	type config struct {
+		Symbols   []string
+		StartDate string
+		EndDate   string
+	}
+
+	type fredConfig struct {
+		Reader string
+		Config config
+	}
+
+	var conf fredConfig
+
+	_, err := toml.DecodeFile(t.ConfigPath, &conf)
+	if err != nil {
+		return reader.FredReaderConfig{}, err
+	}
+
+	if conf.Reader != "fred" {
+		return reader.FredReaderConfig{}, fmt.Errorf("Invalid `Reader` field in the config file. Expected: `fred`. Got: %s", conf.Reader)
+	}
+
+	startDate, err := utils.ParseDate(conf.Config.StartDate)
+	if err != nil {
+		return reader.FredReaderConfig{}, err
+	}
+	endDate, err := utils.ParseDate(conf.Config.EndDate)
+	if err != nil {
+		return reader.FredReaderConfig{}, err
+	}
+
+	return reader.FredReaderConfig{
+		Symbols:   conf.Config.Symbols,
+		StartDate: startDate,
+		EndDate:   endDate,
+	}, nil
+}

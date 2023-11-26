@@ -14,29 +14,30 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package config
+package internal
 
 import (
-	"fmt"
-	"strings"
-
+	"github.com/AleksanderWWW/go-datareader-cli/config"
+	"github.com/AleksanderWWW/go-datareader-cli/utils"
 	"github.com/AleksanderWWW/go-datareader/reader"
+	"github.com/spf13/cobra"
 )
 
-type Parser interface {
-	ParseStooqConfig() (reader.StooqReaderConfig, error)
-	ParseTiingoConfig() (reader.TiingoReaderConfig, error)
-	ParseBankOfCanadaConfig() (reader.BOCReaderConfig, error)
-	ParseFredConfig() (reader.FredReaderConfig, error)
-}
+func GetFredReader(cmd *cobra.Command, parsedArgs utils.ParsedRootArgs, configParser config.Parser) (reader.DataReader, error) {
+	var config reader.FredReaderConfig
+	var err error
 
-func WhichParser(path string) (Parser, error) {
-	if path == "" {
-		return nil, nil
+	if parsedArgs.Config == "" {
+		config = reader.FredReaderConfig{
+			Symbols:   parsedArgs.Symbols,
+			StartDate: parsedArgs.StartDate,
+			EndDate:   parsedArgs.EndDate,
+		}
+	} else {
+		config, err = configParser.ParseFredConfig()
+		if err != nil {
+			return &reader.BOCDataReader{}, err
+		}
 	}
-	splitted := strings.Split(path, ".")
-	if splitted[len(splitted)-1] == "toml" {
-		return NewTomlConfigParser(path), nil
-	}
-	return nil, fmt.Errorf("Cannot find an appropriate config for path '%s'", path)
+	return reader.NewFredDataReader(config)
 }
