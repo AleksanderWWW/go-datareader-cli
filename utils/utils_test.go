@@ -117,6 +117,22 @@ func TestWriterFunctions(t *testing.T) {
 	assert.NoError(t, err)
 }
 
+func TestWriterFunctionsInvalidCsvFile(t *testing.T) {
+	// Create sample DataFrame for testing
+	data := dataframe.DataFrame{}
+
+	// Test writing to stdout
+	stdoutWriter, _ := GetWriterFunc("stdout")
+	err := stdoutWriter(data)
+	assert.NoError(t, err)
+
+	// Test that a non-existent  file path will cause an error
+	csvFileName := "./non_existent_dir/file.csv"
+	csvWriter, _ := GetWriterFunc(csvFileName)
+	err = csvWriter(data)
+	assert.Error(t, err, "open ./non_existent_dir/file.csv: no such file or directory")
+}
+
 func TestParseDate(t *testing.T) {
 	type test struct {
 		in          string
@@ -179,6 +195,26 @@ func TestParseArgs(t *testing.T) {
 			actualParsedArgs,
 		)
 	}
+}
+
+func TestParseArgsFailure(t *testing.T) {
+	_, err := ParseArgs(
+		[]string{"s1", "s2", "s3"},
+		"0-0-0",
+		"2023-12-31",
+		"data.csv",
+		"config.toml",
+	)
+	assert.EqualError(t, err, "parsing time \"0-0-0\" as \"2006-01-02\": cannot parse \"0\" as \"2006\"")
+
+	_, err = ParseArgs(
+		[]string{"s1", "s2", "s3"},
+		"2023-12-31",
+		"0-0-0",
+		"data.csv",
+		"config.toml",
+	)
+	assert.EqualError(t, err, "parsing time \"0-0-0\" as \"2006-01-02\": cannot parse \"0\" as \"2006\"")
 }
 
 func TestParseRootArgs(t *testing.T) {
