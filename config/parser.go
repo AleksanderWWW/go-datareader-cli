@@ -26,6 +26,7 @@ import (
 type Parser interface {
 	ParseStooqConfig() (reader.StooqReaderConfig, error)
 	ParseTiingoConfig() (reader.TiingoReaderConfig, error)
+	ParseBankOfCanadaConfig() (reader.BOCReaderConfig, error)
 }
 
 func WhichParser(path string) (Parser, error) {

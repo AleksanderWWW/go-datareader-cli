@@ -113,3 +113,42 @@ func (t *TomlConfigParser) ParseTiingoConfig() (reader.TiingoReaderConfig, error
 		ApiKey:    conf.Config.ApiKey,
 	}, nil
 }
+
+func (t *TomlConfigParser) ParseBankOfCanadaConfig() (reader.BOCReaderConfig, error) {
+	type config struct {
+		Symbols   []string
+		StartDate string
+		EndDate   string
+	}
+
+	type tiingoConfig struct {
+		Reader string
+		Config config
+	}
+
+	var conf tiingoConfig
+
+	_, err := toml.DecodeFile(t.ConfigPath, &conf)
+	if err != nil {
+		return reader.BOCReaderConfig{}, err
+	}
+
+	if conf.Reader != "bank of canada" {
+		return reader.BOCReaderConfig{}, fmt.Errorf("Invalid `Reader` field in the config file. Expected: `bank of canada`. Got: %s", conf.Reader)
+	}
+
+	startDate, err := utils.ParseDate(conf.Config.StartDate)
+	if err != nil {
+		return reader.BOCReaderConfig{}, err
+	}
+	endDate, err := utils.ParseDate(conf.Config.EndDate)
+	if err != nil {
+		return reader.BOCReaderConfig{}, err
+	}
+
+	return reader.BOCReaderConfig{
+		Symbols:   conf.Config.Symbols,
+		StartDate: startDate,
+		EndDate:   endDate,
+	}, nil
+}
