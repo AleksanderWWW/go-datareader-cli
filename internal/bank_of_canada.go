@@ -23,34 +23,21 @@ import (
 	"github.com/spf13/cobra"
 )
 
-type GetReaderFuncType func(*cobra.Command, utils.ParsedRootArgs, config.Parser) (reader.DataReader, error)
+func GetBankOfCanadaReader(cmd *cobra.Command, parsedArgs utils.ParsedRootArgs, configParser config.Parser) (reader.DataReader, error) {
+	var config reader.BOCReaderConfig
+	var err error
 
-type Runner struct {
-	Cmd       *cobra.Command
-	GetReader GetReaderFuncType
-}
-
-func (r *Runner) Run() error {
-	parsedArgs, err := utils.ParseRootArgs(r.Cmd)
-	if err != nil {
-		return err
+	if parsedArgs.Config == "" {
+		config = reader.BOCReaderConfig{
+			Symbols:   parsedArgs.Symbols,
+			StartDate: parsedArgs.StartDate,
+			EndDate:   parsedArgs.EndDate,
+		}
+	} else {
+		config, err = configParser.ParseBankOfCanadaConfig()
+		if err != nil {
+			return &reader.BOCDataReader{}, err
+		}
 	}
-
-	writerFunc, err := utils.GetWriterFunc(parsedArgs.Out)
-	if err != nil {
-		return err
-	}
-
-	parser, err := config.WhichParser(parsedArgs.Config)
-	if err != nil {
-		return err
-	}
-
-	dataReader, err := r.GetReader(r.Cmd, parsedArgs, parser)
-	if err != nil {
-		return err
-	}
-
-	data := reader.GetData(dataReader)
-	return writerFunc(data)
+	return reader.NewBOCDataReader(config)
 }
