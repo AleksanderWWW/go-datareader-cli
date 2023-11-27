@@ -115,19 +115,19 @@ func TestRunnerWithConfig(t *testing.T) {
 	testCases := []test{
 		{
 			readerFunc: GetFredReader,
-			configPath: "../example_configs/fred_config.toml",
+			configPath: "testdata/test_fred_config.toml",
 		},
 		{
 			readerFunc: GetStooqReader,
-			configPath: "../example_configs/stooq_config.toml",
+			configPath: "testdata/test_stooq_config.toml",
 		},
 		{
 			readerFunc: GetTiingoReader,
-			configPath: "../example_configs/tiingo_config.toml",
+			configPath: "testdata/test_tiingo_config.toml",
 		},
 		{
 			readerFunc: GetBankOfCanadaReader,
-			configPath: "../example_configs/bank_of_canada_config.toml",
+			configPath: "testdata/test_bank_of_canada_config.toml",
 		},
 	}
 

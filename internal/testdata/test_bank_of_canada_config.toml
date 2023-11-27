@@ -1,0 +1,6 @@
+Reader = "bank of canada"
+
+[config]
+Symbols = []
+StartDate = "2022-11-25"
+EndDate = "2023-11-25"
