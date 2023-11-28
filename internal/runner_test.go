@@ -18,6 +18,7 @@ package internal
 
 import (
 	"fmt"
+	"os"
 	"testing"
 
 	"github.com/AleksanderWWW/go-datareader-cli/config"
@@ -103,4 +104,65 @@ func TestRunnerSuccess(t *testing.T) {
 	err := runner.Run()
 
 	assert.Equal(t, nil, err)
+}
+
+func TestRunnerWithConfig(t *testing.T) {
+	type test struct {
+		readerFunc GetReaderFuncType
+		configPath string
+	}
+
+	testCases := []test{
+		{
+			readerFunc: GetFredReader,
+			configPath: "testdata/test_fred_config.toml",
+		},
+		{
+			readerFunc: GetStooqReader,
+			configPath: "testdata/test_stooq_config.toml",
+		},
+		{
+			readerFunc: GetTiingoReader,
+			configPath: "testdata/test_tiingo_config.toml",
+		},
+		{
+			readerFunc: GetBankOfCanadaReader,
+			configPath: "testdata/test_bank_of_canada_config.toml",
+		},
+	}
+
+	var cmd *cobra.Command
+	var err error
+
+	for _, testCase := range testCases {
+
+		// Success
+		cmd = &cobra.Command{}
+		cmd.Flags().String("out", "test.csv", "")
+		cmd.Flags().String("config", testCase.configPath, "")
+
+		runner := Runner{
+			Cmd:       cmd,
+			GetReader: testCase.readerFunc,
+		}
+
+		err = runner.Run()
+		assert.Equal(t, nil, err)
+
+		// Failure
+		cmd = &cobra.Command{}
+		cmd.Flags().String("out", "test.csv", "")
+		cmd.Flags().String("config", "invalid_dir/config.toml", "")
+		runner = Runner{
+			Cmd:       cmd,
+			GetReader: testCase.readerFunc,
+		}
+
+		err = runner.Run()
+		assert.EqualError(t, err, "open invalid_dir/config.toml: no such file or directory")
+	}
+
+	// Clean up: Remove the created CSV file
+	err = os.Remove("test.csv")
+	assert.NoError(t, err)
 }
